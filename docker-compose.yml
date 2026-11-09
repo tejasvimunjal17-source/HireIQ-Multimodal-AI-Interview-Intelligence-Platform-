@@ -1,0 +1,99 @@
+# HireIQ - Day 1 stack: FastAPI + PostgreSQL + Redis + Celery worker.
+# Usage:  cp .env.example .env   (edit it)   then   docker compose up --build
+
+x-backend-env: &backend-env
+  ENVIRONMENT: ${ENVIRONMENT:-development}
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+  # Inside Docker the hostnames are the SERVICE NAMES: "postgres" and "redis".
+  DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+  REDIS_URL: redis://redis:6379/0
+  SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+  CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+  AUDIO_TEMP_DIR: /var/hireiq/audio_tmp
+  AUDIO_MAX_UPLOAD_MB: ${AUDIO_MAX_UPLOAD_MB:-25}
+  AUDIO_MAX_DURATION_SECONDS: ${AUDIO_MAX_DURATION_SECONDS:-600}
+  TRANSCRIPTION_PROVIDER: ${TRANSCRIPTION_PROVIDER:-mock}
+  OPENAI_TRANSCRIPTION_MODEL: ${OPENAI_TRANSCRIPTION_MODEL:-whisper-1}
+  LOCAL_WHISPER_MODEL: ${LOCAL_WHISPER_MODEL:-base}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [hireiq_net]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [hireiq_net]
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Apply database migrations, then start the API.
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    environment: *backend-env
+    volumes:
+      - audio_tmp:/var/hireiq/audio_tmp
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks: [hireiq_net]
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["celery", "-A", "app.workers.celery_app.celery_app", "worker", "--loglevel=info", "--concurrency=2"]
+    environment: *backend-env
+    volumes:
+      - audio_tmp:/var/hireiq/audio_tmp
+    depends_on:
+      backend:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks: [hireiq_net]
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  audio_tmp:
+
+networks:
+  hireiq_net:
+    driver: bridge
