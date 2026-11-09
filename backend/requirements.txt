@@ -1,0 +1,15 @@
+# Runtime dependencies (Day 1). Whisper/spaCy/PyDub/ReportLab are added on their own days.
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
+SQLAlchemy==2.0.36
+psycopg[binary]==3.2.3
+alembic==1.14.0
+celery[redis]==5.4.0
+redis==5.2.0
+python-multipart==0.0.20
+# Day 3: audio processing + transcription API client
+pydub==0.25.1
+audioop-lts==0.2.1; python_version >= "3.13"
+requests==2.32.3
