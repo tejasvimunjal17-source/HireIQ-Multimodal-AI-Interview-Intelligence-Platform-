@@ -1,0 +1,29 @@
+name: Real Whisper API test (manual)
+
+# Runs only when you press "Run workflow" in the Actions tab. Costs a few cents.
+# Needs the repository secret OPENAI_API_KEY (Settings > Secrets and variables > Actions).
+on:
+  workflow_dispatch:
+
+jobs:
+  real-whisper:
+    runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT: test
+      DATABASE_URL: sqlite://
+      SECRET_KEY: ci-only-secret-key-0123456789abcdef0123
+      TRANSCRIPTION_PROVIDER: openai
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      RUN_REAL_WHISPER: "1"
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - name: Check the secret exists (the value is never printed)
+        run: test -n "$OPENAI_API_KEY" || (echo "Add the OPENAI_API_KEY repository secret first" && exit 1)
+      - run: pytest tests/test_openai_real.py -v
