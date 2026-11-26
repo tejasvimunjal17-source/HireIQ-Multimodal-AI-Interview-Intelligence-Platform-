@@ -1,0 +1,51 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Node (Day 2+)
+node_modules/
+dist/
+.vite/
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+.DS_Store
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Candidate data must never be committed
+uploads/
+audio_tmp/
+*.wav
+*.mp3
+*.m4a
+*.webm
+*.ogg
+
+# Generated reports
+reports_out/
+generated_reports/
+
+# Backups
+hireiq-day*.zip
