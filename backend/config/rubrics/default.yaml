@@ -1,0 +1,139 @@
+# HireIQ default rubric.
+#
+# - File name = rubric name. Interview.rubric_name = "default" selects this file.
+# - Question.rubric_key ("technical" or "behavioral") selects one block under question_types.
+# - Every criterion is scored on score_scale. Weights in a block MUST sum to 1.0 (they are never
+#   normalised automatically). All scoring rules live here, not in Python code.
+# - Criteria describe ANSWER CONTENT only. Scoring must never depend on a candidate's name, gender,
+#   age, accent, ethnicity, nationality, religion, disability or other personal characteristics.
+#
+# Edit this file (or add another one next to it) to change how answers are scored.
+
+name: default
+version: 1
+description: General-purpose rubric for mixed technical and behavioral interviews.
+
+score_scale:
+  min: 0
+  max: 10
+
+question_types:
+  technical:
+    description: Questions that test technical knowledge, design reasoning and problem solving.
+    criteria:
+      - key: technical_accuracy
+        name: Technical accuracy
+        description: Whether the concepts, facts and terminology in the answer are correct.
+        weight: 0.35
+        strong_examples:
+          - "Correctly distinguishes a process (own address space) from a thread (shared memory within a process) and names the resulting trade-offs."
+        weak_examples:
+          - "Says threads and processes are 'basically the same thing' or states incorrect facts about either."
+        score_ranges:
+          - { min: 0, max: 2, label: Poor, description: "Mostly incorrect or no relevant technical content." }
+          - { min: 3, max: 4, label: Weak, description: "Some correct ideas but significant errors or confusion." }
+          - { min: 5, max: 6, label: Adequate, description: "Mostly correct with minor errors or omissions." }
+          - { min: 7, max: 8, label: Good, description: "Accurate and complete for the question asked." }
+          - { min: 9, max: 10, label: Excellent, description: "Fully accurate, precise terminology, notes edge cases." }
+      - key: depth_of_understanding
+        name: Depth of understanding
+        description: Whether the candidate explains why things work, not only what they are, including trade-offs.
+        weight: 0.25
+        strong_examples:
+          - "Explains why a resumable upload needs chunk identifiers and what happens when a connection drops mid-transfer."
+        weak_examples:
+          - "Names a technology or buzzword without explaining how or why it applies."
+        score_ranges:
+          - { min: 0, max: 2, label: Poor, description: "Surface-level or memorised statements only." }
+          - { min: 3, max: 4, label: Weak, description: "Little reasoning behind the statements." }
+          - { min: 5, max: 6, label: Adequate, description: "Explains the main mechanism but not the trade-offs." }
+          - { min: 7, max: 8, label: Good, description: "Explains mechanisms and some trade-offs." }
+          - { min: 9, max: 10, label: Excellent, description: "Deep, well-reasoned explanation with trade-offs and limits." }
+      - key: problem_solving_approach
+        name: Problem-solving approach
+        description: Whether the answer follows a logical, practical approach, with concrete steps or examples.
+        weight: 0.20
+        strong_examples:
+          - "Breaks the problem into steps, states assumptions, and gives a concrete example of how it would be applied."
+        weak_examples:
+          - "Jumps to a solution without reasoning, or stays purely abstract with no concrete example."
+        score_ranges:
+          - { min: 0, max: 2, label: Poor, description: "No discernible approach." }
+          - { min: 3, max: 4, label: Weak, description: "Disorganised approach; important steps missing." }
+          - { min: 5, max: 6, label: Adequate, description: "A workable approach with gaps." }
+          - { min: 7, max: 8, label: Good, description: "Clear, practical approach with an example." }
+          - { min: 9, max: 10, label: Excellent, description: "Systematic approach, considers failure cases and alternatives." }
+      - key: communication_clarity
+        name: Communication clarity
+        description: How clearly and logically the answer is organised and explained (content, not accent or fluency).
+        weight: 0.20
+        strong_examples:
+          - "Gives a direct answer first, then supporting detail in a logical order."
+        weak_examples:
+          - "Rambles, repeats itself, or never reaches a clear conclusion."
+        score_ranges:
+          - { min: 0, max: 2, label: Poor, description: "Cannot follow the answer." }
+          - { min: 3, max: 4, label: Weak, description: "Hard to follow; poorly organised." }
+          - { min: 5, max: 6, label: Adequate, description: "Understandable with some disorganisation." }
+          - { min: 7, max: 8, label: Good, description: "Clear and well organised." }
+          - { min: 9, max: 10, label: Excellent, description: "Concise, structured and easy to follow." }
+
+  behavioral:
+    description: Questions about past experience, teamwork, ownership and learning.
+    criteria:
+      - key: situation_and_structure
+        name: Situation and structure
+        description: Whether the candidate describes a specific, real situation and tells it in a clear structure (situation, task, action, result).
+        weight: 0.20
+        strong_examples:
+          - "Describes one specific project, their role in it, what they did, and what happened."
+        weak_examples:
+          - "Speaks only in generalities ('I usually...') with no specific situation."
+        score_ranges:
+          - { min: 0, max: 2, label: Poor, description: "No specific situation described." }
+          - { min: 3, max: 4, label: Weak, description: "Vague situation; structure is hard to see." }
+          - { min: 5, max: 6, label: Adequate, description: "A specific situation with some missing parts." }
+          - { min: 7, max: 8, label: Good, description: "Specific situation told in a clear structure." }
+          - { min: 9, max: 10, label: Excellent, description: "Specific, relevant, and told concisely with all parts present." }
+      - key: ownership_and_actions
+        name: Ownership and actions
+        description: Whether the candidate explains what they personally did and why, as opposed to what the team did.
+        weight: 0.30
+        strong_examples:
+          - "Explains the specific steps they took to resolve the disagreement and why they chose them."
+        weak_examples:
+          - "Says 'we' throughout and never states their own contribution, or blames others."
+        score_ranges:
+          - { min: 0, max: 2, label: Poor, description: "No personal actions described." }
+          - { min: 3, max: 4, label: Weak, description: "Personal role is unclear or minimal." }
+          - { min: 5, max: 6, label: Adequate, description: "Describes own actions but not the reasoning." }
+          - { min: 7, max: 8, label: Good, description: "Clear personal actions with reasoning." }
+          - { min: 9, max: 10, label: Excellent, description: "Decisive, well-reasoned actions showing initiative." }
+      - key: results_and_impact
+        name: Results and impact
+        description: Whether the outcome is stated, ideally with evidence or measurable effect.
+        weight: 0.25
+        strong_examples:
+          - "States the outcome and its effect, for example 'we shipped two weeks earlier and the error rate dropped'."
+        weak_examples:
+          - "Ends the story without saying what happened."
+        score_ranges:
+          - { min: 0, max: 2, label: Poor, description: "No outcome given." }
+          - { min: 3, max: 4, label: Weak, description: "Outcome mentioned but unclear or unsupported." }
+          - { min: 5, max: 6, label: Adequate, description: "Clear outcome without evidence of impact." }
+          - { min: 7, max: 8, label: Good, description: "Clear outcome with some evidence of impact." }
+          - { min: 9, max: 10, label: Excellent, description: "Clear, evidenced outcome and its wider effect." }
+      - key: reflection_and_learning
+        name: Reflection and learning
+        description: Whether the candidate reflects honestly on what they learned or would do differently.
+        weight: 0.25
+        strong_examples:
+          - "Names a specific lesson and describes how it changed their later work."
+        weak_examples:
+          - "Claims nothing could have been done differently or offers no lesson."
+        score_ranges:
+          - { min: 0, max: 2, label: Poor, description: "No reflection." }
+          - { min: 3, max: 4, label: Weak, description: "Generic lesson with no link to the story." }
+          - { min: 5, max: 6, label: Adequate, description: "A lesson linked to the story." }
+          - { min: 7, max: 8, label: Good, description: "A specific lesson and how it was applied." }
+          - { min: 9, max: 10, label: Excellent, description: "Insightful reflection with evidence of changed behaviour." }
