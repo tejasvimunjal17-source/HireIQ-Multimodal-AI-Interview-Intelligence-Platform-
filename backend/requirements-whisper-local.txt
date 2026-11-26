@@ -1,0 +1,4 @@
+# OPTIONAL: run the open-source Whisper model on this machine (TRANSCRIPTION_PROVIDER=local).
+# Large download (PyTorch). Needs ffmpeg. Not used by the default mock/openai providers.
+-r requirements.txt
+openai-whisper==20240930
